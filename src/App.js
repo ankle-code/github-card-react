@@ -1,22 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import GitHubCard from "./Components/Card/Card";
+import { useState } from "react";
+import "./App.css";
+import BootstrapButton from "./Components/Button/Button";
 
 function App() {
+  const [user, setUser] = useState({});
+  const [active, setActive] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const handleToggle = (search) => {
+    fetch(`https://api.github.com/users/${search}`)
+      .then((response) => response.json())
+      .then((data) => setUser(data));
+
+    setActive(!active);
+  };
+
+  const getSearch = (event) => {
+    const inputValue = event.target.value;
+    setSearch(inputValue);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <input placeholder="usuário do GitHub" onChange={getSearch}></input>
+        <BootstrapButton
+          handleToggle={() => handleToggle(search)}
+        ></BootstrapButton>
+        {active && user.id !== undefined && <GitHubCard user={user} />}
       </header>
     </div>
   );
